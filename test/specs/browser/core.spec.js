@@ -344,6 +344,28 @@ describe('Riot core', function() {
 
   })
 
+  it('`data-is` should work in each with changing data', function() {
+    injectHTML('<tag-data-is-each></tag-data-is-each>')
+    var data = [
+      { tag: 'di-test1', val: 'val one' },
+      { tag: 'di-test2', val: 'val two' },
+      { tag: 'di-test3', val: 'val three' }
+    ]
+    var tag = riot.mount('tag-data-is-each', {tags:data})[0]
+    expect(tag.root.innerHTML).to.contain('val one')
+    expect(tag.root.innerHTML).to.contain('val two')
+    expect(tag.root.innerHTML).to.contain('val three')
+
+    data[0].tag = 'di-test1'
+    data[0].val = 'new val here'
+    data[1] = {tag: 'di-test2', val: 'another new val'}
+    tag.update()
+
+    expect(tag.root.innerHTML).to.contain('new val here') // this fails, mutated data
+    expect(tag.root.innerHTML).to.contain('another new val') //this passes
+    tag.unmount()
+  })
+
   it('support `data-is` for html5 compliance', function() {
     injectHTML('<div data-is="tag-data-is"></div>')
     var tag = riot.mount('tag-data-is')[0]
